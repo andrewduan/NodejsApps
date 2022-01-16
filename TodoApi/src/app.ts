@@ -1,10 +1,8 @@
-import * as bodyParser from 'body-parser';
 import * as express from 'express';
-import * as cookieParser from 'cookie-parser';  
-import * as mongoose from 'mongoose';
-import * as cors from 'cors';
 import Controller from './interfaces/controllerInterface';
 import errorMiddleware from './middlewares/exceptionMiddleware';
+
+const mongoose = require('mongoose');
  
 class App {
   public app: express.Application;
@@ -12,7 +10,6 @@ class App {
   constructor(controllers: Controller[]) {
     this.app = express();
     this.connectToTheDatabase();
-    this.initializeMiddlewares();
     this.initializeCors();
     this.initializeControllers(controllers);
     this.initializeErrorHandling();
@@ -32,11 +29,6 @@ class App {
       res.header("Access-Control-Allow-Credentials", "true");
       next();
     });
-  }
- 
-  private initializeMiddlewares() {
-    this.app.use(bodyParser.json());
-    this.app.use(cookieParser())
   }
  
   private initializeControllers(controllers: Controller[]) {
