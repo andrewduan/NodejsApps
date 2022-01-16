@@ -17,6 +17,8 @@ At this moment for sample task like todo, it would be fine without Dependency in
 
 We can also add validator middleware prior request
 
+We can also introduce Docker
+
 ## To start
 
 ```

@@ -1,11 +1,31 @@
 import 'dotenv/config';
-import App from './app';
-
 import TodoController from './todos/todoController';
 
-const app = new App(
-  [
-    new TodoController()
-  ],
-);
-app.listen();
+import errorMiddleware from './middlewares/exceptionMiddleware';
+
+const express = require('express');
+const app = express();
+const path = '/todos';
+const bodyParser = require('body-parser'); 
+// create application/json parser
+const jsonParser = bodyParser.json();
+
+app.get(path, TodoController.getAllTodos);
+app.patch(`${path}/:id`, jsonParser, TodoController.modifyTodo)
+app.delete(`${path}/:id`, TodoController.deleteTodo)
+app.post(path, jsonParser, TodoController.createTodo);
+
+
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Accept");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
+app.use(errorMiddleware);
+
+app.listen(process.env.PORT, () => {
+  console.log(`App listening on the port ${process.env.PORT}`);
+});

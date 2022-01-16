@@ -1,40 +1,37 @@
 import TodoNotFoundException from '../exceptions/todoNotFoundException';
 import { Request, Response, NextFunction, Router } from 'express';
-import Controller from '../interfaces/controllerInterface';
-import Todo from './todoInteface';
 import todoModel from './todoModel';
+import Todo from './todoInteface';
 
-var bodyParser = require('body-parser');
+const mongoose = require('mongoose');
  
-// create application/json parser
-var jsonParser = bodyParser.json();
- 
-
-class TodoController implements Controller {
+class TodoController {
   public path = '/todos';
   public router = Router();
-  private todo = todoModel;
 
-  constructor() {
-    this.initializeRoutes();
+  constructor(){
+    this.connectToTheDatabase();
   }
 
-  private initializeRoutes() {
-    this.router.get(this.path, this.getAllTodos);
-    this.router
-      .patch(`${this.path}/:id`, jsonParser, this.modifyTodo)
-      .delete(`${this.path}/:id`, this.deleteTodo)
-      .post(this.path, jsonParser, this.createTodo);
+  private connectToTheDatabase() {
+    const {
+      MONGO_USER,
+      MONGO_PASSWORD,
+      MONGO_PATH,
+    } = process.env;
+    console.log(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`);
+    
+    mongoose.connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`,{ useNewUrlParser: true, useUnifiedTopology: true  });
   }
 
-  private getAllTodos = async (request: Request, response: Response) => {
-    const todos = await this.todo.find();
+  public async getAllTodos(request: Request, response: Response) {
+    const todos = await todoModel.find();
     response.send(todos);
   }
 
-  private getTodoById = async (request: Request, response: Response, next: NextFunction) => {
+  public async getTodoById(request: Request, response: Response, next: NextFunction) {
     const id = request.params.id;
-    const todo = await this.todo.findOne({"TodoId": parseInt(id)});
+    const todo = await todoModel.findOne({"TodoId": parseInt(id)});
     if (todo) {
       response.send(todo);
     } else {
@@ -42,34 +39,34 @@ class TodoController implements Controller {
     }
   }
 
-  private modifyTodo = async (request: Request, response: Response, next: NextFunction) => {
+  public async modifyTodo(request: Request, response: Response, next: NextFunction) {
     const id = parseInt(request.params.id);
     const todoData: Todo = request.body;
-    const todo = await this.todo.findOne({"TodoId": id});
+    const todo = await todoModel.findOne({"TodoId": id});
     if (todo) {
-      await this.todo.updateOne({'TodoId': id}, { $set: {...todoData}});
+      await todoModel.updateOne({'TodoId': id}, { $set: {...todoData}});
       response.send(todo);
     } else {
       next(new TodoNotFoundException(`${id}`));
     }
   }
 
-  private createTodo = async (request: Request, response: Response) => {
+  public async createTodo(request: Request, response: Response) {
     
     console.log('todoData request passed in', request.body);
     const todoData: Todo = request.body;
 
    
-    const createdTodo = new this.todo();    
-    const savedTodo = await this.todo.create({...todoData});
+    const createdTodo = new todoModel();    
+    const savedTodo = await todoModel.create({...todoData});
     response.send(savedTodo);
   }
 
-  private deleteTodo = async (request: Request, response: Response, next: NextFunction) => {
+  public async deleteTodo(request: Request, response: Response, next: NextFunction) {
     const id = parseInt(request.params.id);
-    const successResponse = await this.todo.deleteOne({"TodoId": id});
+    const successResponse = await todoModel.deleteOne({"TodoId": id});
     if (successResponse) {
-      const todos = await this.todo.find();
+      const todos = await todoModel.find();
       response.send(todos);
     } else {
       next(new TodoNotFoundException(`${id}`));
@@ -77,4 +74,4 @@ class TodoController implements Controller {
   }
 }
 
-export default TodoController;
+export default new TodoController();
