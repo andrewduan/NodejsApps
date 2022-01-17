@@ -31,7 +31,7 @@ class TodoController {
 
   public async getTodoById(request: Request, response: Response, next: NextFunction) {
     const id = request.params.id;
-    const todo = await todoModel.findOne({"TodoId": parseInt(id)});
+    const todo = await todoModel.findOne({"TodoId": id});
     if (todo) {
       response.send(todo);
     } else {
@@ -40,7 +40,7 @@ class TodoController {
   }
 
   public async modifyTodo(request: Request, response: Response, next: NextFunction) {
-    const id = parseInt(request.params.id);
+    const id = request.params.id;
     const todoData: Todo = request.body;
     const todo = await todoModel.findOne({"TodoId": id});
     if (todo) {
@@ -63,7 +63,7 @@ class TodoController {
   }
 
   public async deleteTodo(request: Request, response: Response, next: NextFunction) {
-    const id = parseInt(request.params.id);
+    const id = request.params.id;
     const successResponse = await todoModel.deleteOne({"TodoId": id});
     if (successResponse) {
       const todos = await todoModel.find();

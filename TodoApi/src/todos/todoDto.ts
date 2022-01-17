@@ -2,7 +2,7 @@ export class TodoEntity {
   
   public TaskName: String;
   
-  public TodoId: Number; 
+  public TodoId: String; 
   
   public IsCompleted: Boolean;
 }

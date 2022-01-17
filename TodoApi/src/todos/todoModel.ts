@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose; 
 const todoSchema = new Schema({
-  TodoId: Number,
+  TodoId: String,
   TaskName: String,
   IsCompleted: Boolean
 });

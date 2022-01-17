@@ -1,5 +1,5 @@
 interface Todo {
-    TodoId: number;
+    TodoId: string;
     TaskName: string;
     IsCompleted: boolean;
 }

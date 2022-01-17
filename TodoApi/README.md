@@ -12,12 +12,14 @@
 
 ## To be added
 
-To make it cleaner, we can add dependency injection to class.
+1. Unit tests
+
+2. To make it cleaner, we can add dependency injection to class.
 At this moment for sample task like todo, it would be fine without Dependency injection(Over engineering maybe???)
 
-We can also add validator middleware prior request
+3. We can also add validator middleware prior request
 
-We can also introduce Docker
+4. We can also introduce Docker
 
 ## To start
 
