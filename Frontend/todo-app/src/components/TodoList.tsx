@@ -1,13 +1,13 @@
 import React, { useContext } from "react";
 import axios from "axios";
 import TodosContext from "../contexts/todo";
-import { TodoModel, TodoState } from "../interfaces";
+import { TodoModel } from "../interfaces";
 import { TodoApiUrl } from "../constants";
 import { fromApiPayload, toApiPayload } from "../util/mapper";
 
 export default function TodoList() {
   const value = useContext(TodosContext);
-  const { state: {todos, currentTodo}, dispatch } = value;
+  const { state: {todos}, dispatch } = value;
   const title =
     todos.length > 0 ? `${todos.length} Tasks` : "Nothing To Do!";
 
@@ -25,7 +25,7 @@ export default function TodoList() {
                   `${TodoApiUrl}/${todo.id}`,
                   toApiPayload({...todo, ...{completed: !todo.completed}})
                 );
-                dispatch && dispatch({ type: "TOGGLE_TODO", payload: fromApiPayload(response.data) });
+                dispatch({ type: "TOGGLE_TODO", payload: fromApiPayload(response.data) });
               }}
               className={`flex-1 ml-12 cursor-pointer text-grey-darkest  ${todo.completed &&
                 "line-through"}`}
@@ -34,7 +34,7 @@ export default function TodoList() {
             </span>
             <button
               onClick={() =>
-                dispatch && dispatch({ type: "SET_CURRENT_TODO", payload: todo })
+                dispatch({ type: "SET_CURRENT_TODO", payload: todo })
               }
             >
               <img
@@ -48,7 +48,7 @@ export default function TodoList() {
                 await axios.delete(
                   `${TodoApiUrl}/${todo.id}`
                 );
-                dispatch && dispatch({ type: "REMOVE_TODO", payload: todo });
+                dispatch({ type: "REMOVE_TODO", payload: todo });
               }}
             >
               <img

@@ -5,6 +5,6 @@ const initialState : TodoState = {
     todos: [],
     currentTodo: undefined
   };
-const TodosContext = React.createContext<{state: TodoState, dispatch?: React.Dispatch<TodoAction>}>({state: initialState}); 
+const TodosContext = React.createContext<{state: TodoState, dispatch: React.Dispatch<TodoAction>}>({state: initialState, dispatch: ()=> null}); 
 
 export default TodosContext;

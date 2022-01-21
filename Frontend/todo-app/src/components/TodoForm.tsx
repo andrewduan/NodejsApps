@@ -9,7 +9,7 @@ export default function TodoForm() {
   const [todo, setTodo] = useState("");
 
   const value = useContext(TodosContext);
-  const { state: {todos, currentTodo}, dispatch } = value;
+  const { state: {currentTodo}, dispatch } = value;
 
   useEffect(
     () => {
@@ -19,7 +19,7 @@ export default function TodoForm() {
         setTodo("");
       }
     },
-    [value.state]
+    [value.state, currentTodo]
   );
 
   const handleSubmit = async (event: FormEvent) => {
@@ -29,7 +29,7 @@ export default function TodoForm() {
         `${TodoApiUrl}/${currentTodo.id}`,
         toApiPayload({...currentTodo, ...{taskName: todo}})
       );
-      dispatch && dispatch({ type: "UPDATE_TODO", payload: fromApiPayload(response.data) });
+      dispatch({ type: "UPDATE_TODO", payload: fromApiPayload(response.data) });
     } else {
       const body = toApiPayload({
         id: uuid(),
@@ -40,7 +40,7 @@ export default function TodoForm() {
         TodoApiUrl,
         body
       );
-      dispatch && dispatch({ type: "ADD_TODO", payload: fromApiPayload(response.data) });
+      dispatch({ type: "ADD_TODO", payload: fromApiPayload(response.data) });
     }
     setTodo("");
   };
