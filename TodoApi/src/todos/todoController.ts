@@ -45,7 +45,7 @@ class TodoController {
     const todo = await todoModel.findOne({"TodoId": id});
     if (todo) {
       await todoModel.updateOne({'TodoId': id}, { $set: {...todoData}});
-      response.send(todo);
+      response.send(todoData);
     } else {
       next(new TodoNotFoundException(`${id}`));
     }
