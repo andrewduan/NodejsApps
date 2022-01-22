@@ -11,7 +11,6 @@ export interface TodoAction {
 
 export interface TodoState {
     todos: TodoModel[];
-    currentTodo?: TodoModel
 }
 
 export interface TodoApiResponse {

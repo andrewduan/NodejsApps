@@ -25,14 +25,6 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
         ...state,
         todos: addedTodos
       };
-    case "SET_CURRENT_TODO":
-      if (Array.isArray(action.payload)) {
-        return state;
-      }
-      return {
-        ...state,
-        currentTodo: action.payload
-      };
     case "TOGGLE_TODO":
       if (Array.isArray(action.payload)) {
         return state;
@@ -52,7 +44,7 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
       }
       const updatedTodo = { ...action.payload };
       const updatedTodoIndex = state.todos.findIndex(
-        t => state.currentTodo && t.id === state.currentTodo.id
+        t => t.id === updatedTodo.id
       );
       const updatedTodos = [
         ...state.todos.slice(0, updatedTodoIndex),
@@ -61,7 +53,6 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
       ];
       return {
         ...state,
-        currentTodo: undefined,
         todos: updatedTodos
       };
     case "REMOVE_TODO":
@@ -70,11 +61,8 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
       }
       const removedTodo = action.payload;
       const filteredTodos = state.todos.filter(t => t.id !== removedTodo.id);
-      const isRemovedTodo =
-      state.currentTodo && state.currentTodo.id === removedTodo.id ? undefined : state.currentTodo;
       return {
         ...state,
-        currentTodo: isRemovedTodo,
         todos: filteredTodos
       };
     default:

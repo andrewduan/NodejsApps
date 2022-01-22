@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import axios from "axios";
 import TodosContext from "../contexts/todo";
 import { TodoModel } from "../interfaces";
@@ -11,7 +11,11 @@ export default function TodoList() {
   const title =
     todos.length > 0 ? `${todos.length} Tasks` : "Nothing To Do!";
 
-  return (
+  const [inEdit, setInEdit] = useState(false);
+  const initialChosenTodo: TodoModel = {} as TodoModel;
+  const [chosenTodo, setChosenTodo] = useState(initialChosenTodo);
+
+  return (    
     <div className="container mx-auto max-w-md text-center font-mono">
       <h1 className="text-bold">{title}</h1>
       <ul className="list-reset p-0">
@@ -30,11 +34,41 @@ export default function TodoList() {
               className={`flex-1 ml-12 cursor-pointer text-grey-darkest  ${todo.completed &&
                 "line-through"}`}
             >
-              {todo.taskName}
+              { inEdit && todo.id === chosenTodo.id ?
+                (<input
+                  type="text"
+                  className="border-black border-solid border-2"
+                  onKeyPress={async (event) =>{
+                    if (event.key === 'Enter'){
+                      const response = await axios.patch(
+                        `${TodoApiUrl}/${chosenTodo.id}`,
+                        toApiPayload(chosenTodo)
+                      );
+                      dispatch({ type: "UPDATE_TODO", payload: fromApiPayload(response.data) });
+                      setChosenTodo(initialChosenTodo);
+                      setInEdit(false);
+                    }
+                  }}
+                  onChange={(event) => {
+                    setChosenTodo({...chosenTodo, ...{taskName: event.target.value}}) 
+                  }}
+                  onDoubleClick={async () => {
+                    const response = await axios.patch(
+                      `${TodoApiUrl}/${todo.id}`,
+                      toApiPayload(todo)
+                    );
+                    dispatch({ type: "UPDATE_TODO", payload: fromApiPayload(response.data) });
+                    setInEdit(false);
+                  }}
+                  value={chosenTodo.taskName}
+                />) :
+                <span>{todo.taskName}</span>
+              }
             </span>
             <button
-              onClick={() =>
-                dispatch({ type: "SET_CURRENT_TODO", payload: todo })
+              onClick={() => {
+                setInEdit(true);
+                setChosenTodo(todo);}
               }
             >
               <img
