@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect } from "react";
-import axios from "axios";
+import React, { useContext, useState } from "react";
 import TodosContext from "../contexts/todo";
 import { TodoModel } from "../interfaces";
-import { TodoApiUrl } from "../constants";
-import { fromApiPayload, toApiPayload } from "../util/mapper";
+import { fromApiPayload } from "../util/mapper";
+import { patchTodo, removeTodo } from "../util/api";
+import { ActionType } from "../constants";
 
 export default function TodoList() {
   const value = useContext(TodosContext);
@@ -25,11 +25,8 @@ export default function TodoList() {
             className="flex items-center bg-orange-dark border-black border-dashed border-2 my-2 py-4"
           > <span
               onDoubleClick={async () => {
-                const response = await axios.patch(
-                  `${TodoApiUrl}/${todo.id}`,
-                  toApiPayload({...todo, ...{completed: !todo.completed}})
-                );
-                dispatch({ type: "TOGGLE_TODO", payload: fromApiPayload(response.data) });
+                const response = await patchTodo({...todo, ...{completed: !todo.completed}});
+                dispatch({ type: ActionType.ToggleTodo, payload: fromApiPayload(response.data) });
               }}
               className={`flex-1 ml-12 cursor-pointer text-grey-darkest  ${todo.completed &&
                 "line-through"}`}
@@ -39,27 +36,17 @@ export default function TodoList() {
                   type="text"
                   className="border-black border-solid border-2"
                   onKeyPress={async (event) =>{
+                    // TODO need to handle user changes mind of updating
                     if (event.key === 'Enter'){
-                      const response = await axios.patch(
-                        `${TodoApiUrl}/${chosenTodo.id}`,
-                        toApiPayload(chosenTodo)
-                      );
-                      dispatch({ type: "UPDATE_TODO", payload: fromApiPayload(response.data) });
+                      const response = await patchTodo(chosenTodo);
+                      dispatch({ type: ActionType.UpdateTodo, payload: fromApiPayload(response.data) });
                       setChosenTodo(initialChosenTodo);
                       setInEdit(false);
                     }
                   }}
                   onChange={(event) => {
                     setChosenTodo({...chosenTodo, ...{taskName: event.target.value}}) 
-                  }}
-                  onDoubleClick={async () => {
-                    const response = await axios.patch(
-                      `${TodoApiUrl}/${todo.id}`,
-                      toApiPayload(todo)
-                    );
-                    dispatch({ type: "UPDATE_TODO", payload: fromApiPayload(response.data) });
-                    setInEdit(false);
-                  }}
+                  }}                 
                   value={chosenTodo.taskName}
                 />) :
                 <span>{todo.taskName}</span>
@@ -79,10 +66,8 @@ export default function TodoList() {
             </button>
             <button
               onClick={async () => {
-                await axios.delete(
-                  `${TodoApiUrl}/${todo.id}`
-                );
-                dispatch({ type: "REMOVE_TODO", payload: todo });
+                await removeTodo(todo);
+                dispatch({ type: ActionType.DeleteTodo, payload: todo });
               }}
             >
               <img

@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext, FormEvent } from "react";
-import axios from "axios";
+import React, { useState, useContext, FormEvent } from "react";
 import { uuid } from '../util/uuidGen';
 import TodosContext from "../contexts/todo";
-import { TodoApiUrl } from "../constants";
-import { fromApiPayload, toApiPayload } from "../util/mapper";
+import { fromApiPayload } from "../util/mapper";
+import { addTodo } from "../util/api";
+import { ActionType } from "../constants";
 
 export default function TodoForm() {
   const [todo, setTodo] = useState("");
@@ -13,16 +13,13 @@ export default function TodoForm() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const body = toApiPayload({
+    const response = await addTodo({
       id: uuid(),
       taskName: todo,
       completed: false
     });
-    const response = await axios.post(
-      TodoApiUrl,
-      body
-    );
-    dispatch({ type: "ADD_TODO", payload: fromApiPayload(response.data) });
+    
+    dispatch({ type: ActionType.AddTodo, payload: fromApiPayload(response.data) });
     setTodo("");
   };
 

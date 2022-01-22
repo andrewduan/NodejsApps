@@ -1,3 +1,5 @@
+import { ActionType } from "../constants";
+
 export interface TodoModel {
     id: string;
     taskName: string;
@@ -5,7 +7,7 @@ export interface TodoModel {
 }
 
 export interface TodoAction {
-    type: string;
+    type: ActionType;
     payload: TodoModel | TodoModel[];
 }
 

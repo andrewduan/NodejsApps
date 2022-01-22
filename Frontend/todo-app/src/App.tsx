@@ -1,16 +1,16 @@
 import React, { useContext, useReducer, useState, useEffect } from "react";
-import ReactDOM from "react-dom";
-import axios from "axios";
 import TodosContext from "./contexts/todo";
 import todosReducer from "./reducers/todo";
 
 import TodoList from "./components/TodoList";
 import TodoForm from "./components/TodoForm";
-import { TodoApiUrl } from "./constants";
-import { TodoApiResponse, TodoModel, TodoState } from "./interfaces";
+import { TodoModel } from "./interfaces";
 import { fromApiPayload } from "./util/mapper";
+import { getTodos } from "./util/api";
 
-const useAPI = (endpoint : string) => {
+import { ActionType } from './constants';
+
+const useAPI = () => {
   const initialState: TodoModel[] = [];
   const [data, setData] = useState(initialState);
 
@@ -19,7 +19,7 @@ const useAPI = (endpoint : string) => {
   }, []);
 
   const getData = async () => {
-    const response = await axios.get<TodoApiResponse[]>(endpoint);
+    const response = await getTodos();
     const todos: TodoModel[] = response.data.map<TodoModel>(fromApiPayload);
     setData(todos);
   };
@@ -30,11 +30,11 @@ const useAPI = (endpoint : string) => {
 const App = () => {
   const initialState = useContext(TodosContext);
   const [state, dispatch] = useReducer(todosReducer, initialState.state);
-  const existingTodos = useAPI(TodoApiUrl);
+  const existingTodos = useAPI();
 
   useEffect(
     () => {
-      dispatch({type: 'GET_TODOS', payload: existingTodos});
+      dispatch({type: ActionType.RetrieveTodos, payload: existingTodos});
     },
     [existingTodos]
   );

@@ -1,8 +1,9 @@
+import { ActionType } from "../constants";
 import { TodoAction, TodoModel, TodoState } from "../interfaces";
 
 export default function reducer(state: TodoState, action: TodoAction) : TodoState {
   switch (action.type) {
-    case "GET_TODOS":
+    case ActionType.RetrieveTodos:
       if (!Array.isArray(action.payload)) {
         return state;
       }
@@ -12,7 +13,7 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
         todos: action.payload
       };
       return intialSavedTodos;
-    case "ADD_TODO":
+    case ActionType.AddTodo:
       if (Array.isArray(action.payload)) {
         return state;
       }
@@ -25,7 +26,7 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
         ...state,
         todos: addedTodos
       };
-    case "TOGGLE_TODO":
+    case ActionType.ToggleTodo:
       if (Array.isArray(action.payload)) {
         return state;
       }
@@ -38,7 +39,7 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
         ...state,
         todos: toggledTodos
       };
-    case "UPDATE_TODO":
+    case ActionType.UpdateTodo:
       if(Array.isArray(action.payload)) {
         return state;
       }
@@ -55,7 +56,7 @@ export default function reducer(state: TodoState, action: TodoAction) : TodoStat
         ...state,
         todos: updatedTodos
       };
-    case "REMOVE_TODO":
+    case ActionType.DeleteTodo:
       if (Array.isArray(action.payload)) {
         return state;
       }
