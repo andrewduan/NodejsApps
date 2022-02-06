@@ -1,14 +1,11 @@
 import TodoNotFoundException from '../exceptions/todoNotFoundException';
-import { Request, Response, NextFunction, Router } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import todoModel from './todoModel';
 import Todo from './todoInteface';
 
 const mongoose = require('mongoose');
  
 class TodoController {
-  public path = '/todos';
-  public router = Router();
-
   constructor(){
     this.connectToTheDatabase();
   }
