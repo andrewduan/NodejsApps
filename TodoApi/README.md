@@ -4,10 +4,10 @@
   Create a sample TODO API for TODOs CURD. It can be used to serve the Frontend code.
 
 ## Tech used
-  # Nodejs,
-  # Expression
-  # Typescript
-  # MongoDB
+  Nodejs,
+  Expression
+  Typescript
+  MongoDB & Mongoose
 
 
 ## To be added
