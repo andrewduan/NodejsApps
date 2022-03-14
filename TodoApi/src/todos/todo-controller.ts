@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { ITodoService } from './todo-service-contract';
 import { injectable, inject } from 'tsyringe';
 import { TodoDto } from './dto/todo.dto';
+import { FilterTodosDto } from './dto/filter-todo.dto';
+import { valueToBoolean } from '../utils/boolean-transformer';
 
 @injectable()
 class TodoController {
@@ -13,7 +15,19 @@ class TodoController {
     next: NextFunction,
   ) => {
     try {
-      const todos = await this.service.getAllTodos();
+      const { search, isCompleted } = request.query;
+      let todos;
+      if (search || isCompleted) {
+        // TODO, trying to bind to filterTodosDto and execute transform, still working on it
+        const filterTodosDto: FilterTodosDto = {
+          search,
+          isCompleted: valueToBoolean(isCompleted),
+        };
+        todos = await this.service.getFilteredTodos(filterTodosDto);
+      } else {
+        todos = await this.service.getAllTodos();
+      }
+
       response.send(todos);
     } catch (e) {
       next(e);

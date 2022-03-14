@@ -12,9 +12,8 @@ import { v4 as uuid } from 'uuid';
 
 @singleton()
 export class DbProviderImpl implements IDbProvider {
-  constructor(@inject('DbConfig') private dbConfig: IDbConfig) {
-    const { user, password, path } = this.dbConfig.mongoDb;
-    connect(`mongodb+srv://${user}:${password}${path}`);
+  constructor(@inject('DbConfig') dbConfig: IDbConfig) {
+    connect(dbConfig.connectionString());
   }
 
   async getAllTodos(): Promise<Todo[]> {

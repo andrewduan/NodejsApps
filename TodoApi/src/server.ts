@@ -8,11 +8,11 @@ import * as bodyParser from 'body-parser';
 
 import { TodoService } from './todos/todo-service';
 import { DbProviderImpl } from './database/mongoDb/db-provider.implementation';
-import { dbConfig } from './config/db-config';
+import { DbConfig } from './config/db-config';
 
 import TodoController from './todos/todo-controller';
 
-container.register('DbConfig', { useValue: dbConfig });
+container.register('DbConfig', { useClass: DbConfig });
 container.register('DbProvider', { useClass: DbProviderImpl });
 container.register('TodoService', { useClass: TodoService });
 const todoController = container.resolve(TodoController);

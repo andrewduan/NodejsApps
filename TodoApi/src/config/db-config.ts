@@ -1,15 +1,13 @@
+import { injectable } from 'tsyringe';
+
 export interface IDbConfig {
-  mongoDb: {
-    user: string;
-    password: string;
-    path: string;
-  };
+  connectionString(): string;
 }
 
-export const dbConfig: IDbConfig = {
-  mongoDb: {
-    user: process.env.MONGO_USER,
-    password: process.env.MONGO_PASSWORD,
-    path: process.env.MONGO_PATH,
-  },
-};
+@injectable()
+export class DbConfig implements IDbConfig {
+  connectionString(): string {
+    const { MONGO_USER, MONGO_PASSWORD, MONGO_PATH } = process.env;
+    return `mongodb+srv://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`;
+  }
+}
