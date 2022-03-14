@@ -32,7 +32,7 @@ export const ToBoolean = () => {
   };
 };
 
-const valueToBoolean = (value: any) => {
+export const valueToBoolean = (value: any) => {
   if (value === null || value === undefined) {
     return undefined;
   }
