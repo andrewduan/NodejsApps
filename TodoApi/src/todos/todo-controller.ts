@@ -4,6 +4,7 @@ import { injectable, inject } from 'tsyringe';
 import { TodoDto } from './dto/todo.dto';
 import { FilterTodosDto } from './dto/filter-todo.dto';
 import { valueToBoolean } from '../utils/boolean-transformer';
+import { PatchTodoDto } from './dto/patch-todo.dto';
 
 @injectable()
 class TodoController {
@@ -15,8 +16,9 @@ class TodoController {
     next: NextFunction,
   ) => {
     try {
-      const { search, isCompleted } = request.query;
-      let todos;
+      const { search, isCompleted } = request.query || {};
+
+      let todos: TodoDto[];
       if (search || isCompleted) {
         // TODO, trying to bind to filterTodosDto and execute transform, still working on it
         const filterTodosDto: FilterTodosDto = {
@@ -27,7 +29,7 @@ class TodoController {
       } else {
         todos = await this.service.getAllTodos();
       }
-
+      response.status(200);
       response.send(todos);
     } catch (e) {
       next(e);
@@ -42,6 +44,7 @@ class TodoController {
     const id = request.params.id;
     try {
       const todo = await this.service.getTodoById(id);
+      response.status(200);
       response.send(todo);
     } catch (e) {
       next(e);
@@ -54,7 +57,7 @@ class TodoController {
     next: NextFunction,
   ) => {
     const id = request.params.id;
-    const todoData: TodoDto = request.body;
+    const todoData: PatchTodoDto = request.body;
     const { taskName, isCompleted } = todoData;
     try {
       const todo = await this.service.patchTodo(id, { taskName, isCompleted });
@@ -88,6 +91,7 @@ class TodoController {
     const id = request.params.id;
     try {
       await this.service.deleteTodoById(id);
+      response.status(200);
       response.send();
     } catch (e) {
       next(e);
