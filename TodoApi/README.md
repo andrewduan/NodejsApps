@@ -14,14 +14,11 @@ MongoDB & Mongoose
 
 ## To be added
 
-1. Unit tests
+1. Unit tests (added for backend, pending on frontend)
 
-2. To make it cleaner, we can add dependency injection to class.
-   At this moment for sample task like todo, it would be fine without Dependency injection(Over engineering maybe???)
+2. We can also add validator middleware prior request
 
-3. We can also add validator middleware prior request
-
-4. We can also introduce Docker
+3. We can also introduce Docker for backend api
 
 ## To start
 
@@ -33,4 +30,11 @@ then
 
 ```
 npm dev
+```
+
+## Prettier & Eslint
+```
+npm run lint
+
+npm run prettier:fix
 ```
