@@ -1,50 +1,47 @@
-import React, { useContext, useReducer, useState, useEffect } from "react";
-import TodosContext from "./contexts/todo";
-import todosReducer from "./reducers/todo";
+import React, { useContext, useReducer, useState, useEffect } from 'react'
+import TodosContext from './contexts/todo'
+import todosReducer from './reducers/todo'
 
-import TodoList from "./components/TodoList";
-import TodoForm from "./components/TodoForm";
-import { TodoModel } from "./interfaces";
-import { fromApiPayload } from "./util/mapper";
-import { getTodos } from "./util/api";
+import TodoList from './components/todo-list'
+import TodoForm from './components/todo-form'
+import { TodoModel } from './interfaces'
+import { fromApiPayload } from './util/mapper'
+import { getTodos } from './util/api'
 
-import { ActionType } from './constants';
+import { ActionType } from './constants'
 
 const useAPI = () => {
-  const initialState: TodoModel[] = [];
-  const [data, setData] = useState(initialState);
+  const initialState: TodoModel[] = []
+  const [data, setData] = useState(initialState)
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData()
+  }, [])
 
   const getData = async () => {
-    const response = await getTodos();
-    const todos: TodoModel[] = response.data.map<TodoModel>(fromApiPayload);
-    setData(todos);
-  };
+    const response = await getTodos()
+    const todos: TodoModel[] = response.data.map<TodoModel>(fromApiPayload)
+    setData(todos)
+  }
 
-  return data;
-};
+  return data
+}
 
 const App = () => {
-  const initialState = useContext(TodosContext);
-  const [state, dispatch] = useReducer(todosReducer, initialState.state);
-  const existingTodos = useAPI();
+  const initialState = useContext(TodosContext)
+  const [state, dispatch] = useReducer(todosReducer, initialState.state)
+  const existingTodos = useAPI()
 
-  useEffect(
-    () => {
-      dispatch({type: ActionType.RetrieveTodos, payload: existingTodos});
-    },
-    [existingTodos]
-  );
+  useEffect(() => {
+    dispatch({ type: ActionType.RetrieveTodos, payload: existingTodos })
+  }, [existingTodos])
 
   return (
-    <TodosContext.Provider value={{state, dispatch}}>
+    <TodosContext.Provider value={{ state, dispatch }}>
       <TodoForm />
       <TodoList />
     </TodosContext.Provider>
-  );
-};
+  )
+}
 
-export default App;
+export default App
