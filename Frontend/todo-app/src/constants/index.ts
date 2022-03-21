@@ -1,4 +1,4 @@
-export const TodoApiUrl = 'http://localhost:5000/todos'
+export const TodoApiUrl = 'http://localhost:5000/todos';
 
 export enum ActionType {
   UpdateTodo = 'UPDATE_TODO',

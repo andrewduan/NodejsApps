@@ -1,22 +1,22 @@
-import React, { useContext, useState } from 'react'
-import TodosContext from '../contexts/todo'
-import { TodoModel } from '../interfaces'
-import { fromApiPayload } from '../util/mapper'
-import { patchTodo, removeTodo } from '../util/api'
-import { ActionType } from '../constants'
+import React, { useContext, useState } from 'react';
+import TodosContext from '../contexts/todo';
+import { TodoModel } from '../interfaces';
+import { fromApiPayload } from '../util/mapper';
+import { patchTodo, removeTodo } from '../util/api';
+import { ActionType } from '../constants';
 
 export default function TodoList() {
-  const value = useContext(TodosContext)
+  const value = useContext(TodosContext);
   const {
     state: { todos },
     dispatch,
-  } = value
+  } = value;
 
-  const title = todos.length > 0 ? `${todos.length} Tasks` : 'Nothing To Do!'
+  const title = todos.length > 0 ? `${todos.length} Tasks` : 'Nothing To Do!';
 
-  const [inEdit, setInEdit] = useState(false)
-  const initialChosenTodo: TodoModel = {} as TodoModel
-  const [chosenTodo, setChosenTodo] = useState(initialChosenTodo)
+  const [inEdit, setInEdit] = useState(false);
+  const initialChosenTodo: TodoModel = {} as TodoModel;
+  const [chosenTodo, setChosenTodo] = useState(initialChosenTodo);
 
   return (
     <div className="container mx-auto max-w-md text-center font-mono">
@@ -32,11 +32,11 @@ export default function TodoList() {
                 const response = await patchTodo({
                   ...todo,
                   ...{ completed: !todo.completed },
-                })
+                });
                 dispatch({
                   type: ActionType.ToggleTodo,
                   payload: fromApiPayload(response.data),
-                })
+                });
               }}
               className={`flex-1 ml-12 cursor-pointer text-grey-darkest  ${
                 todo.completed && 'line-through'
@@ -49,20 +49,20 @@ export default function TodoList() {
                   onKeyPress={async (event) => {
                     // TODO need to handle user changes mind of updating
                     if (event.key === 'Enter') {
-                      const response = await patchTodo(chosenTodo)
+                      const response = await patchTodo(chosenTodo);
                       dispatch({
                         type: ActionType.UpdateTodo,
                         payload: fromApiPayload(response.data),
-                      })
-                      setChosenTodo(initialChosenTodo)
-                      setInEdit(false)
+                      });
+                      setChosenTodo(initialChosenTodo);
+                      setInEdit(false);
                     }
                   }}
                   onChange={(event) => {
                     setChosenTodo({
                       ...chosenTodo,
                       ...{ taskName: event.target.value },
-                    })
+                    });
                   }}
                   value={chosenTodo.taskName}
                 />
@@ -72,8 +72,8 @@ export default function TodoList() {
             </span>
             <button
               onClick={() => {
-                setInEdit(true)
-                setChosenTodo(todo)
+                setInEdit(true);
+                setChosenTodo(todo);
               }}
             >
               <img
@@ -84,8 +84,8 @@ export default function TodoList() {
             </button>
             <button
               onClick={async () => {
-                await removeTodo(todo)
-                dispatch({ type: ActionType.DeleteTodo, payload: todo })
+                await removeTodo(todo);
+                dispatch({ type: ActionType.DeleteTodo, payload: todo });
               }}
             >
               <img
@@ -98,5 +98,5 @@ export default function TodoList() {
         ))}
       </ul>
     </div>
-  )
+  );
 }

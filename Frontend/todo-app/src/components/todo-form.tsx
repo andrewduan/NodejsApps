@@ -1,30 +1,30 @@
-import React, { useState, useContext, FormEvent } from 'react'
-import { uuid } from '../util/uuidGen'
-import TodosContext from '../contexts/todo'
-import { fromApiPayload } from '../util/mapper'
-import { addTodo } from '../util/api'
-import { ActionType } from '../constants'
+import React, { useState, useContext, FormEvent } from 'react';
+import { uuid } from '../util/uuidGen';
+import TodosContext from '../contexts/todo';
+import { fromApiPayload } from '../util/mapper';
+import { addTodo } from '../util/api';
+import { ActionType } from '../constants';
 
 export default function TodoForm() {
-  const [todo, setTodo] = useState('')
+  const [todo, setTodo] = useState('');
 
-  const value = useContext(TodosContext)
-  const { dispatch } = value
+  const value = useContext(TodosContext);
+  const { dispatch } = value;
 
   const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault()
+    event.preventDefault();
     const response = await addTodo({
       id: uuid(),
       taskName: todo,
       completed: false,
-    })
+    });
 
     dispatch({
       type: ActionType.AddTodo,
       payload: fromApiPayload(response.data),
-    })
-    setTodo('')
-  }
+    });
+    setTodo('');
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex justify-center p-5">
@@ -35,5 +35,5 @@ export default function TodoForm() {
         value={todo}
       />
     </form>
-  )
+  );
 }
