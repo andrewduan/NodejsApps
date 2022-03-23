@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import TodosContext from '../contexts/todo';
 import { TodoModel } from '../interfaces';
 import { fromApiPayload } from '../util/mapper';
@@ -7,6 +7,7 @@ import { ActionType } from '../constants';
 
 export default function TodoList() {
   const value = useContext(TodosContext);
+
   const {
     state: { todos },
     dispatch,

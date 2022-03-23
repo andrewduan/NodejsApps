@@ -1,16 +1,15 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import TodoList from './todo-list';
-import { TodoAction, TodoModel, TodoState } from '../interfaces';
-import { useContext } from 'react';
+import { TodoModel, TodoState } from '../interfaces';
 import { patchTodo } from '../util/api';
 import { AxiosResponse } from 'axios';
+import TodosContext from '../contexts/todo';
 
 let todos: TodoModel[];
 
-const dispatch: (actionPayload: TodoAction) => void = jest.fn();
+const mockDispatch = jest.fn();
 
 let todoState: TodoState;
-
 jest.mock('../util/api', () => ({
   ...jest.requireActual('../util/api'),
   patchTodo: jest.fn(),
@@ -32,39 +31,29 @@ beforeEach(() => {
       completed: true,
     },
   ];
-
   todoState = { todos };
+});
+
+const renderTodoList = (todosState: any, mockDispatch: any) =>{
+  return render(<TodosContext.Provider value={{ state: todosState, dispatch: mockDispatch}}>
+    <TodoList />
+  </TodosContext.Provider>);
+};
+
+beforeEach(() => {
+  mockDispatch.mockClear();
 });
 
 afterEach(() => {
   cleanup();
-  jest.resetAllMocks();
+  jest.clearAllMocks();
 });
-
-jest.mock('react', () => ({
-  ...jest.requireActual('react'),
-  useContext: jest.fn(),
-  useReducer: jest.fn(),
-}));
-
-jest.mock('../util/api', () => ({
-  ...jest.requireActual('../util/api'),
-  patchTodo: jest.fn(),
-  addTodo: jest.fn(),
-  removeTodo: jest.fn(),
-  getTodos: jest.fn(),
-}));
 
 describe('todo list', () => {
   it('should render todo list with passed in todos', () => {
-    (useContext as jest.Mock).mockImplementation(() => ({
-      state: todoState,
-      dispatch,
-    }));
+    const component =  renderTodoList({todos}, mockDispatch);
+    const todoItems = component.getAllByRole('listitem');
 
-    render(<TodoList />);
-
-    const todoItems = screen.getAllByRole('listitem');
     expect(todoItems.length).toBe(2);
     expect(todoItems[0].children[0].textContent).toEqual('Prepare Dinner');
     expect(todoItems[0].children[0].className).not.toContain('line-through');
@@ -72,26 +61,20 @@ describe('todo list', () => {
     expect(todoItems[1].children[0].className).toContain('line-through');
   });
 
-  it('should fire event and update todo status', async () => {
+  it('should fire event and update todo status-with provider', async () => {
     (patchTodo as jest.Mock).mockImplementation(
       () =>
         ({
           data: { TodoId: '1', TaskName: 'Prepare Dinner', IsCompleted: true },
         } as unknown as AxiosResponse<any, any>)
     );
-    (useContext as jest.Mock).mockImplementation(() => ({
-      state: todoState,
-      dispatch,
-    }));
-
-    render(<TodoList />);
-
-    const todoItems = screen.getAllByRole('listitem');
-    const todoElement1 = todoItems[0].children[0];
-    fireEvent.doubleClick(todoElement1);
-    expect(patchTodo).toBeCalledTimes(1);
-    // TODO need to figure out how to verify dispatch
-    // expect(dispatch).toHaveBeenCalledTimes(1);
-    // expect(todoElement1.className).toContain("line-through");
+    
+    const component =  renderTodoList({todos}, mockDispatch);
+    const todoItems = component.getAllByRole('listitem');
+    const firstTodo = todoItems[0].children[0];
+    fireEvent.doubleClick(firstTodo);
+    
+    await waitFor(() => expect(patchTodo).toHaveBeenCalledTimes(1));
+    expect(mockDispatch).toHaveBeenCalledTimes(1);
   });
 });
